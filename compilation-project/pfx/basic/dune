@@ -1,0 +1,9 @@
+(library
+ (name basicPfx)
+ (libraries utils)
+ (modules Ast Lexer Parser Eval))
+
+(ocamllex lexer)
+
+(menhir
+ (modules parser))
