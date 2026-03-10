@@ -12,9 +12,59 @@ let string_of_state (cmds,stack) =
 (* Question 4.2 *)
 let step state =
   match state with
-  | [], _ -> Error("Nothing to step",state)
-  (* Valid configurations *)
-  | DefineMe :: q , stack          -> Ok (q, stack)
+  | [], _ ->
+      Error ("Nothing to step", state)
+
+  (* push *)
+  | Push n :: q, stack ->
+      Ok (q, n :: stack)
+
+  (* pop *)
+  | Pop :: q, _ :: stack' ->
+      Ok (q, stack')
+  | Pop :: _, _ ->
+      Error ("pop on empty stack", state)
+
+  (* swap *)
+  | Swap :: q, x :: y :: stack' ->
+      Ok (q, y :: x :: stack')
+  | Swap :: _, _ ->
+      Error ("swap needs at least two elements", state)
+
+  (* add *)
+  | Add :: q, x :: y :: stack' ->
+      Ok (q, (x + y) :: stack')
+  | Add :: _, _ ->
+      Error ("add needs at least two elements", state)
+
+  (* sub : top - second *)
+  | Sub :: q, x :: y :: stack' ->
+      Ok (q, (x - y) :: stack')
+  | Sub :: _, _ ->
+      Error ("sub needs at least two elements", state)
+
+  (* mul *)
+  | Mul :: q, x :: y :: stack' ->
+      Ok (q, (x * y) :: stack')
+  | Mul :: _, _ ->
+      Error ("mul needs at least two elements", state)
+
+  (* div : top / second *)
+  | Div :: _, _ :: 0 :: _ ->
+      Error ("division by zero", state)
+  | Div :: q, x :: y :: stack' ->
+      Ok (q, (x / y) :: stack')
+  | Div :: _, _ ->
+      Error ("div needs at least two elements", state)
+
+  (* rem : top mod second *)
+  | Rem :: _, _ :: 0 :: _ ->
+      Error ("modulo by zero", state)
+  | Rem :: q, x :: y :: stack' ->
+      Ok (q, (x mod y) :: stack')
+  | Rem :: _, _ ->
+      Error ("rem needs at least two elements", state)
+
 
 let eval_program (numargs, cmds) args =
   let rec execute = function
