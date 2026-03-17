@@ -24,4 +24,16 @@ let string_of_command = function
 
 let string_of_commands cmds = String.concat " " (List.map string_of_command cmds)
 
-let string_of_program (args, cmds) = Printf.sprintf "%i args: %s\n" args (string_of_commands cmds)
+let string_of_command_ast = function
+  | Push n -> Printf.sprintf "Push %d" n
+  | Pop -> "Pop"
+  | Swap -> "Swap"
+  | Add -> "Add"
+  | Sub -> "Sub"
+  | Mul -> "Mul"
+  | Div -> "Div"
+  | Rem -> "Rem"
+
+let string_of_program (args, cmds) =
+  let printed_cmds = String.concat "; " (List.map string_of_command_ast cmds) in
+  Printf.sprintf "(%d, [%s])" args printed_cmds
