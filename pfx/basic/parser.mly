@@ -10,6 +10,7 @@
 (* enter tokens here, they should begin with %token *)
 %token EOF
 %token <int> INT
+%token PUSH POP SWAP ADD SUB MUL DIV REM
 
 
 (******************************

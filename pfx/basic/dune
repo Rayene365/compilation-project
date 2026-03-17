@@ -7,3 +7,8 @@
 
 (menhir
  (modules parser))
+
+(executable
+ (name lexerStandalone)
+ (modules lexerStandalone)
+ (libraries basicPfx))
