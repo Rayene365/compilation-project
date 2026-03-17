@@ -1,6 +1,5 @@
 %{
-  (* Ocaml code here*)
-
+  open Ast
 %}
 
 (**************
@@ -19,6 +18,8 @@
 
 (* enter your %start clause here *)
 %start <Ast.program> program
+%type <Ast.command list> commands
+%type <Ast.command> command
 
 %%
 
@@ -26,8 +27,21 @@
  * The rules *
  *************)
 
-(* list all rules composing your grammar; obviously your entry point has to be present *)
+program:
+  | i=INT cmds=commands EOF { i, cmds }
 
-program: i=INT EOF { i,[] }
+commands:
+  | c=command cmds=commands { c :: cmds }
+  |                         { [] }
+
+command:
+  | PUSH i=INT { Push i }
+  | POP        { Pop }
+  | SWAP       { Swap }
+  | ADD        { Add }
+  | SUB        { Sub }
+  | MUL        { Mul }
+  | DIV        { Div }
+  | REM        { Rem }
 
 %%
