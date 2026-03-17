@@ -1,4 +1,5 @@
 open BasicPfx
+open Utils
 
 let print_token = function
   | Parser.EOF -> print_string "EOF"
@@ -25,8 +26,15 @@ let compile file =
   try
     let input_file = open_in file in
     let lexbuf = Lexing.from_channel input_file in
-    examine_all lexbuf;
-    print_newline ();
+    Location.init lexbuf file;
+    begin
+      try
+        examine_all lexbuf;
+        print_newline ()
+      with Location.Error (e, l) ->
+        print_string e;
+        Location.print l
+    end;
     close_in input_file
   with Sys_error _ ->
     print_endline ("Can't find file '" ^ file ^ "'")
