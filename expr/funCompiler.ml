@@ -22,8 +22,8 @@ let parse_eval file =
          Location.print l
     end;
     close_in input_file
-  with Syserror  ->
-    printendline ("Can't find file '" ^ file ^ "'")
+  with Sys_error _ ->
+    print_endline ("Can't find file '" ^ file ^ "'")
 
-let  =
+let _ =
   Arg.parse [] parse_eval ""
