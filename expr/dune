@@ -1,3 +1,7 @@
 (executables
  (names main compiler)
  (libraries utils basicExpr))
+
+(executable
+ (name funCompiler)
+ (libraries utils funExpr))

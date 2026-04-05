@@ -1,0 +1,9 @@
+(library
+ (name funExpr)
+ (libraries utils common funPfx)
+ (modules Ast Lexer Parser ToPfx))
+
+(ocamllex lexer)
+
+(menhir
+ (modules parser))
