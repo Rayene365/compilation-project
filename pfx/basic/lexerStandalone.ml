@@ -12,10 +12,6 @@ let print_token = function
   | Parser.MUL -> print_string "MUL"
   | Parser.DIV -> print_string "DIV"
   | Parser.REM -> print_string "REM"
-  | Parser.EXEC -> print_string "EXEC"
-  | Parser.GET -> print_string "GET"
-  | Parser.LPAR -> print_string "LPAR"
-  | Parser.RPAR -> print_string "RPAR"
 
 let rec examine_all lexbuf =
   let result = Lexer.token lexbuf in
