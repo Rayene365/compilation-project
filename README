@@ -1,142 +1,141 @@
-AUTHORS
--------
+LaLog Compilation Project
+=========================
 
-- NAME1
-- NAME2
-…
-
-===============
-
-Description of the project
---------------------------
-
-This μ-project is a very simple compiler…
-
-===============
-
-Sources
--------
-
-Git repository: https://gitlab-df.imt-atlantique.fr/...
-
-(obviously, you _will_ use a version control system such as Git, IMT
-Atlantique provides a project management platform: use it!)
-
-Release : tag 1.0 or commit acdeacdacdacdacd
-
-===============
-
-How to…
--------
-
-…retrieve the sources?
-
-  git clone https://gitlab-df.imt-atlantique.fr/...
-
-…compile?
-
-  dune …
-
-…execute and test?
-
-  dune exec ./pfx/pfxVM.exe -- TESTFILE.pfx -a 12 -a 52
-
-
-===============
-
-Structure of the project
-------------------------
-
-The project is organized as following:
-
-Explain here the organization of your project, what is the use of each file or
-group of files, etc.
-
-You may also show the file tree as the following example:
-
-project
-├── README
-├── dune-project
-├── expr: the expr compiler
-│   ├── README
-│   ├── basic
-│   │   ├── ast.ml
-│   │   ├── ast.mli
-│   │   ├── dune
-│   │   ├── eval.ml
-│   │   ├── eval.mli
-│   │   ├── lexer.mll
-│   │   ├── parser.mly
-│   │   ├── tests: for tests
-│   │   │   └── an_example.expr
-│   │   ├── toPfx.ml             <- To edit
-│   │   └── toPfx.mli
-│   ├── common
-│   │   ├── binOp.ml
-│   │   ├── binOp.mli
-│   │   └── dune
-│   ├── compiler.ml: main file for the expr compiler
-│   ├── dune
-│   ├── fun: the expr parser for section 7
-│   │   ├── ast.ml
-│   │   ├── ast.mli
-│   │   ├── lexer.mll
-│   │   └── parser.mly
-│   └── main.ml
-├── pfx: the pfx VM
-│   ├── basic
-│   │   ├── ast.ml               <- To edit
-│   │   ├── ast.mli
-│   │   ├── dune
-│   │   ├── eval.ml              <- To edit
-│   │   ├── eval.mli
-│   │   ├── lexer.mll            <- To edit
-│   │   ├── parser.mly           <- To edit
-│   │   └── tests: for tests
-│   │       └── ok_prog.pfx
-│   └── pfxVM.ml: main file for the pfx VM
-└── utils
-    ├── dune
-    ├── location.ml: module offering a data type for a location in a file
-    └── location.mli
-===============
-
-Progress
+Overview
 --------
 
-- We stopped at question 10.1 (proof of derivation)
-- There is still a bug in question 8.3 (new version of generate function)
-- …
+This repository contains an OCaml implementation of a small compiler pipeline
+and a stack-based virtual machine.
 
-===============
+The codebase is organized around two language families:
 
-Know bugs and issues
---------------------
+- `Expr`: a small expression language;
+- `Pfx`: a stack-machine language and its virtual machine.
 
-- We were not able to manage xxx…
-- Compiler fails when xxx…
-- …
+Each family has two variants:
 
-===============
+- `basic`: the arithmetic-only version;
+- `fun`: the extended version with functions, application, executable
+  sequences, and closures.
 
-Helpful resources
------------------
 
-- we used Stack Overflow to solve the problem of xxx :
-  https://stackoverflow/xxxxxxi
-  https://stackoverflow/yyyyyy
-- someone on GitHub provided an interesting example very similar to the answer of the question x.y : https://github.com/xxxx
-- …
+Current Features
+----------------
 
-===============
+- `expr/basic`
+  - arithmetic expressions with integers, variables, unary minus, and binary
+    operators;
+  - lexer, parser, and direct evaluator;
+  - code generation to `basicPfx` for variable-free arithmetic expressions.
+- `pfx/basic`
+  - stack-machine instructions `push`, `pop`, `swap`, `add`, `sub`, `mul`,
+    `div`, and `rem`;
+  - lexer, parser, evaluator, and location-aware error reporting;
+  - standalone lexer executable for token inspection.
+- `expr/fun`
+  - functions, application, and `let x = e1 in e2` syntactic sugar;
+  - code generation to the extended `funPfx` machine.
+- `pfx/fun`
+  - executable sequences `( ... )`;
+  - instructions `exec`, `get`, and `append`;
+  - runtime support for closures.
 
-Difficulties
-------------
 
-- team programming: having to use a VCS such as git and avoiding conflicts
-- thinking functional
-- changing habits by using an unknown language
-- Not a single difficulty: the project was so easy that my 8-old brother did it
-  completely; the Ocaml language is so nice I enjoyed the project, …
-- …
+Project Layout
+--------------
+
+Core directories:
+
+- `utils`
+  - shared location and error-reporting helpers.
+- `expr/common`
+  - shared binary-operator definitions.
+- `expr/basic`
+  - AST, lexer, parser, evaluator, and `Expr -> basicPfx` code generator.
+- `expr/fun`
+  - extended `Expr` frontend and `Expr -> funPfx` code generator.
+- `pfx/basic`
+  - basic stack machine, parser, evaluator, and standalone lexer driver.
+- `pfx/fun`
+  - extended stack machine with executable sequences and closures.
+
+Top-level executables:
+
+- `expr/main.exe`
+  - evaluates a basic `Expr` file directly.
+- `expr/compiler.exe`
+  - compiles a basic `Expr` file to `basicPfx`, prints the generated program,
+    then runs it.
+- `expr/funCompiler.exe`
+  - compiles an extended `Expr` file to `funPfx`, prints the generated
+    program, then runs it.
+- `pfx/pfxVM.exe`
+  - parses and executes a basic `Pfx` program.
+- `pfx/funVM.exe`
+  - parses and executes an extended `Pfx` program.
+
+
+Build
+-----
+
+Build everything with:
+
+  dune build
+
+
+Usage
+-----
+
+The simplest workflow is to build once, then run the generated binaries from
+`_build/default`.
+
+Evaluate a basic `Expr` program:
+
+  ./_build/default/expr/main.exe expr/basic/tests/an_example.expr
+
+Compile and run a basic `Expr` program through `basicPfx`:
+
+  ./_build/default/expr/compiler.exe expr/basic/tests/an_example.expr
+
+Parse and execute a basic `Pfx` program:
+
+  ./_build/default/pfx/pfxVM.exe pfx/basic/tests/ok_prog.pfx
+
+Inspect the token stream of a basic `Pfx` file:
+
+  ./_build/default/pfx/basic/lexerStandalone.exe pfx/basic/tests/ok_prog.pfx
+
+Compile and run extended `Expr` programs:
+
+  ./_build/default/expr/funCompiler.exe expr/fun/tests/simple_app.expr
+  ./_build/default/expr/funCompiler.exe expr/fun/tests/capture.expr
+  ./_build/default/expr/funCompiler.exe expr/fun/tests/let_sugar.expr
+
+Parse and execute extended `Pfx` programs:
+
+  ./_build/default/pfx/funVM.exe pfx/fun/tests/ok_prog.pfx
+  ./_build/default/pfx/funVM.exe pfx/fun/tests/exec_prog.pfx
+  ./_build/default/pfx/funVM.exe pfx/fun/tests/get_prog.pfx
+  ./_build/default/pfx/funVM.exe pfx/fun/tests/append_prog.pfx
+
+Programs that expect stack arguments accept repeated `-a` options:
+
+  ./_build/default/pfx/pfxVM.exe -a 7 -a 3 /tmp/args_prog.pfx
+
+
+Representative Results
+----------------------
+
+The following commands currently work:
+
+- `./_build/default/expr/main.exe expr/basic/tests/an_example.expr`
+  prints `-67`.
+- `./_build/default/expr/compiler.exe expr/basic/tests/an_example.expr`
+  generates a `basicPfx` program and evaluates it to `-67`.
+- `./_build/default/pfx/pfxVM.exe pfx/basic/tests/ok_prog.pfx`
+  evaluates to `5`.
+- `./_build/default/expr/funCompiler.exe expr/fun/tests/capture.expr`
+  evaluates to `4`.
+- `./_build/default/pfx/funVM.exe pfx/fun/tests/append_prog.pfx`
+  evaluates to `6`.
 
