@@ -11,6 +11,7 @@ type command =
   | ExecSeq of command list
   | Exec
   | Get
+  | Append
 (* The type for programs *)
 type program = int * command list
 

@@ -10,7 +10,7 @@
 %token EOF
 %token <int> INT
 %token PUSH POP SWAP ADD SUB MUL DIV REM
-%token LPAR RPAR EXEC GET
+%token LPAR RPAR EXEC GET APPEND
 
 
 (******************************
@@ -47,5 +47,6 @@ command:
   | LPAR cmds=commands RPAR { ExecSeq cmds }
   | EXEC       { Exec }
   | GET        { Get }
+  | APPEND     { Append }
 
 %%

@@ -23,6 +23,10 @@ let rec nth_value depth stack =
   | n, _ :: stack' when n > 0 -> nth_value (n - 1) stack'
   | _ -> None
 
+let store_command = function
+  | VInt n -> Push n
+  | VCode cmds -> ExecSeq cmds
+
 (* Question 4.2 *)
 let step state =
   match state with
@@ -100,6 +104,13 @@ let step state =
       end
   | Get :: _, _ ->
       Error ("get needs an integer on top of the stack", state)
+
+  (* append *)
+  | Append :: q, value :: VCode cmds :: stack' ->
+      let closure = VCode (store_command value :: cmds @ [Swap; Pop]) in
+      Ok (q, closure :: stack')
+  | Append :: _, _ ->
+      Error ("append needs a value on top of an executable sequence", state)
 
 
 let eval_program (numargs, cmds) args =

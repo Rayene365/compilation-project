@@ -10,6 +10,7 @@ type command =
   | ExecSeq of command list
   | Exec
   | Get
+  | Append
 
 type program = int * command list
 
@@ -27,6 +28,7 @@ let rec string_of_command = function
   | ExecSeq cmds -> "(" ^ string_of_commands cmds ^ ")"
   | Exec -> "exec"
   | Get -> "get"
+  | Append -> "append"
 
 and string_of_commands cmds = String.concat " " (List.map string_of_command cmds)
 
@@ -44,6 +46,7 @@ let rec string_of_command_ast = function
       Printf.sprintf "ExecSeq [%s]" printed_cmds
   | Exec -> "Exec"
   | Get -> "Get"
+  | Append -> "Append"
 
 let string_of_program (args, cmds) =
   let printed_cmds = String.concat "; " (List.map string_of_command_ast cmds) in

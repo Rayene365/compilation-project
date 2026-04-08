@@ -35,6 +35,7 @@ rule token = parse
   | "rem"                  { REM }
   | "exec"                 { EXEC }
   | "get"                  { GET }
+  | "append"               { APPEND }
   | "("                    { LPAR }
   | ")"                    { RPAR }
   (* illegal characters *)
